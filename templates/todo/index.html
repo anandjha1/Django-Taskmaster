@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="sm:flex sm:items-center">
+    <div class="sm:flex-auto">
+        <h1 class="text-2xl font-semibold text-gray-900">My Tasks</h1>
+        <p class="mt-2 text-sm text-gray-700">A list of all your tasks and their current status.</p>
+    </div>
+</div>
+
+<div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    {% for todo in todos %}
+    <div class="bg-white overflow-hidden shadow rounded-lg divide-y divide-gray-200">
+        <div class="px-4 py-5 sm:px-6">
+            <div class="flex items-center justify-between">
+                <h3
+                    class="text-lg font-medium text-gray-900 {% if todo.completed %}line-through text-gray-500{% endif %}">
+                    {{ todo.title }}
+                </h3>
+                <div class="ml-2">
+                    <form method="post" action="{% url 'complete_todo' todo.id %}" class="inline">
+                        {% csrf_token %}
+                        <button type="submit"
+                            class="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded {% if todo.completed %}bg-gray-100 text-gray-800 hover:bg-gray-200{% else %}bg-green-100 text-green-800 hover:bg-green-200{% endif %}">
+                            {% if todo.completed %}Mark Incomplete{% else %}Complete{% endif %}
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <p class="mt-1 text-sm text-gray-600 {% if todo.completed %}line-through{% endif %}">{{ todo.description }}
+            </p>
+        </div>
+        <div class="px-4 py-4 sm:px-6 bg-gray-50">
+            <div class="flex items-center justify-between">
+                <div class="text-xs text-gray-500">
+                    <p>Created {{ todo.created_at|timesince }} ago</p>
+                    <p class="mt-1">Updated {{ todo.updated_at|timesince }} ago</p>
+                </div>
+                <div class="flex space-x-2">
+                    <a href="{% url 'edit_todo' todo.id %}"
+                        class="inline-flex items-center px-2.5 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Edit
+                    </a>
+                    <a href="{% url 'delete_todo' todo.id %}"
+                        class="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                        Delete
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-span-full">
+        <div class="text-center">
+            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2">
+                </path>
+            </svg>
+            <h3 class="mt-2 text-sm font-medium text-gray-900">No tasks</h3>
+            <p class="mt-1 text-sm text-gray-500">Get started by creating a new task.</p>
+            <div class="mt-6">
+                <a href="{% url 'create_todo' %}"
+                    class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    Create your first task
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
